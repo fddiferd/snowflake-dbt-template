@@ -1,0 +1,4 @@
+~*.pptx
+~*.docx
+setup/setup_integration.sql
+.DS_Store

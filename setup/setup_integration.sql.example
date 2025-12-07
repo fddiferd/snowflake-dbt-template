@@ -1,0 +1,46 @@
+-- =============================================================================
+-- GitHub Integration Setup for Snowflake
+-- =============================================================================
+-- 
+-- PREREQUISITES:
+-- 1. Create a Fine-Grained Personal Access Token (PAT) on GitHub:
+--    - Go to: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens
+--    - Set expiration as needed
+--    - Select the repository you want to access
+--    - Grant "Contents" permission (read-only is sufficient for cloning)
+--
+-- 2. Copy this file to create_github_integration.sql and fill in your values
+--
+-- IMPORTANT: Run these statements IN ORDER (secret must exist before API integration)
+-- =============================================================================
+
+USE ROLE ACCOUNTADMIN;
+USE DATABASE analytics;
+USE SCHEMA public;
+
+-- Step 1: Create the secret to store your GitHub PAT
+CREATE OR REPLACE SECRET MY_GITHUB_PAT_SECRET
+  TYPE = PASSWORD
+  USERNAME = '<github_username>'
+  PASSWORD = '<your-fine-grained-personal-access-token>';
+
+-- Step 2: Create the API integration that allows the secret
+-- NOTE: The secret must be created BEFORE running this statement
+CREATE OR REPLACE API INTEGRATION MY_GITHUB_API_INTEGRATION
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/<github_username>')
+  ALLOWED_AUTHENTICATION_SECRETS = (MY_GITHUB_PAT_SECRET)
+  ENABLED = TRUE;
+
+-- Step 3: Create the Git repository connection
+CREATE OR REPLACE GIT REPOSITORY MY_REPO_NAME
+  API_INTEGRATION = MY_GITHUB_API_INTEGRATION
+  GIT_CREDENTIALS = MY_GITHUB_PAT_SECRET
+  ORIGIN = 'https://github.com/<github_username>/<your_repo_name>.git';
+
+-- Step 4: Fetch latest and create DBT project 
+ALTER GIT REPOSITORY MY_REPO_NAME FETCH;
+
+CREATE OR REPLACE DBT PROJECT <database>.<schema>.MY_DBT_PROJECT
+  FROM '@<database>.<schema>.MY_REPO_NAME/branches/main/<dbt_project_folder>'
+  COMMENT = '<description of your dbt project>';
