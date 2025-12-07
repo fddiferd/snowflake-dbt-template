@@ -18,9 +18,9 @@ Create `profiles.yml` in your dbt project folder:
 
 ```yaml
 snowflake_intelligence_dbt_demo:
-  target: "{{ env_var('DBT_TARGET', 'PROD') }}"
+  target: "{{ env_var('DBT_TARGET', 'prod') }}"
   outputs:
-    PROD:
+    prod:
       type: snowflake
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'placeholder') }}"
       user: "{{ env_var('DBT_SNOWFLAKE_USER', 'placeholder') }}"
@@ -30,7 +30,7 @@ snowflake_intelligence_dbt_demo:
       warehouse: <MY_WAREHOUSE>
       role: <MY_ROLE>
       threads: 4
-    STAGING:
+    staging:
       type: snowflake
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'placeholder') }}"
       user: "{{ env_var('DBT_SNOWFLAKE_USER', 'placeholder') }}"
@@ -40,7 +40,7 @@ snowflake_intelligence_dbt_demo:
       warehouse: <MY_WAREHOUSE>
       role: <MY_ROLE>
       threads: 4
-    DEV:
+    dev:
       type: snowflake
       account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'placeholder') }}"
       user: "{{ env_var('DBT_SNOWFLAKE_USER', 'placeholder') }}"
@@ -58,6 +58,6 @@ snowflake_intelligence_dbt_demo:
 export DBT_SNOWFLAKE_ACCOUNT="<YOUR_ACCOUNT>"
 export DBT_SNOWFLAKE_USER="<YOUR_USERNAME>"
 export DBT_SNOWFLAKE_PASSWORD="<YOUR_PASSWORD>"
-export DBT_TARGET="DEV"
+export DBT_TARGET="dev"
 export DBT_DEV_SCHEMA="<YOUR_SCHEMA>"
 ```
